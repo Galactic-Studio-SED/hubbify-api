@@ -9,9 +9,9 @@ const routes = require("./routes/routes");
 const router = require("./routes/router");
 
 const server = http.createServer(async (req, res) => {
-    await router(req, res, routes);
+  await router(req, res, routes);
 });
 
 server.listen(port, () => {
-    console.log(`> Server is running on port ${port}`);
+  console.log(`> Server is running on port ${port}`);
 });
