@@ -1,5 +1,6 @@
 const http = require("http");
 const dotenv = require("dotenv");
+const setSecurityHeaders = require("./helper/headers.helper");
 
 dotenv.config();
 
@@ -9,6 +10,7 @@ const routes = require("./routes/index.routes");
 const router = require("./routes/router");
 
 const server = http.createServer(async (req, res) => {
+    setSecurityHeaders(res);
     await router(req, res, routes);
 });
 
