@@ -9,7 +9,7 @@ const expTime = process.env.TOKEN_EXP;
 const tools = {};
 
 tools.generateToken = (_id) => {
-  return jwt.sign({ userId: _id }, secret, { expiresIn: expTime || 0 });
+  return jwt.sign({ userId: _id }, secret, { expiresIn: `${expTime}h` || 0 });
 };
 
 tools.verifyToken = (token) => {
