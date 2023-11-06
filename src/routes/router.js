@@ -26,10 +26,19 @@ module.exports = (req, res, routes) => {
 
   if (routeMatch) {
     let body = [];
-
+    let requestBodySize = 0;
+      
     req
       .on("data", (chunk) => {
-        body.push(chunk);
+        requestBodySize += Buffer.byteLength(chunk);
+
+        if (requestBodySize > 102400) {
+          res.statusCode = 413;
+          res.end("The request body exceeds the size limit.");
+          return;
+        } else {
+          body.push(chunk);
+        }
       })
       .on("end", () => {
         if (body.length > 0) {
@@ -39,7 +48,13 @@ module.exports = (req, res, routes) => {
         }
 
         if (method === "POST" || method === "PUT") {
-          req.body = parse(body);
+          try {
+            req.body = JSON.parse(body);
+          } catch (error) {
+            res.statusCode = 400;
+            res.end("Invalid JSON request body");
+            return;
+          }
         }
 
         req.params = routeMatch.params;
