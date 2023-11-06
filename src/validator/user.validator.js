@@ -1,5 +1,4 @@
 const { sendError } = require("../helper/response.helper");
-const { escape } = require("mysql");
 
 const validateUsername = (username) => {
   const usernamePattern = /^[a-zA-Z0-9_\s]+$/;

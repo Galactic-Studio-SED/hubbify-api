@@ -104,8 +104,7 @@ module.exports = {
   },
   singin: async (req, res) => {
     try {
-      const bodyData = JSON.parse(Object.keys(req.body)[0]);
-      const { email, password } = bodyData;
+      const { email, password } = req.body;
 
       if (!email || !password)
         return helper.response(res, 401, "Information not provided");
