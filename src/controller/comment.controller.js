@@ -10,8 +10,7 @@ const {
 module.exports = {
   createComment: async (req, res) => {
     try {
-      const bodyData = JSON.parse(Object.keys(req.body)[0]);
-      const { userId, content } = bodyData;
+      const { userId, content } = req.body;
 
       const setData = {
         userId,
@@ -54,8 +53,7 @@ module.exports = {
   updateComment: async (req, res) => {
     try {
       const { id } = req.params;
-      const bodyData = JSON.parse(Object.keys(req.body)[0]);
-      const { content } = bodyData;
+      const { content } = req.body;
 
       const setData = {
         content,

@@ -20,9 +20,8 @@ const validateUserInput = (req, res, next) => {
   if (!req.body) {
     next();
   }
-
-  const bodyData = JSON.parse(Object.keys(req.body)[0]);
-  const { username, email, phone } = bodyData;
+  
+  const { username, email, phone } = req.body;
 
   if (!validateUsername(username)) {
     return sendError(res, 400, "Invalid username");

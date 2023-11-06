@@ -10,8 +10,7 @@ const {
 module.exports = {
     createUser: async (req, res) => {
         try {
-            const bodyData = JSON.parse(Object.keys(req.body)[0]);
-            const { username, email, password, phone } = bodyData;
+            const { username, email, password, phone } = req.body;
 
             const setData = {
                 username,
@@ -61,8 +60,7 @@ module.exports = {
     updateUser: async (req, res) => {
         try {
             const { id } = req.params;
-            const bodyData = JSON.parse(Object.keys(req.body)[0]);
-            const { username, email, password, phone } = bodyData;
+            const { username, email, password, phone } = req.body;
 
             const setData = {
                 username,
