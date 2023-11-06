@@ -27,7 +27,7 @@ module.exports = (req, res, routes) => {
   if (routeMatch) {
     let body = [];
     let requestBodySize = 0;
-
+      
     req
       .on("data", (chunk) => {
         requestBodySize += Buffer.byteLength(chunk);
@@ -60,17 +60,21 @@ module.exports = (req, res, routes) => {
         req.params = routeMatch.params;
 
         // Run middleware before controller function
-        if (routeMatch.middleware) {
-          for (const middleware of routeMatch.middleware) {
+        function middlewareController(req, res, middlewares, index = 0) {
+          if (index < middlewares.length) {
+            const middleware = middlewares[index];
             middleware(req, res, () => {
-              // Continue with controller function
-              routeMatch.handler(req, res);
+              //calling next middleware as chain
+              middlewareController(req, res, middlewares, index + 1);
             });
-          }
-        } else {
-          // If there is no middleware, just call the handler function
-          routeMatch.handler(req, res);
+            //since all middlewares were called we execute handler
+          } else routeMatch.handler(req, res);
         }
+
+        //validating middlewares does exists
+        if (routeMatch.middleware)
+          middlewareController(req, res, routeMatch.middleware);
+        else routeMatch.handler(req, res);
       });
   } else {
     res.writeHead(404, { "Content-Type": "application/json" });
