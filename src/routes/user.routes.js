@@ -12,6 +12,7 @@ const {
   singin,
 } = require("../controller/user.controller");
 
+const validateId = require("../validator/uuid.validator");
 const validateUserInput = require("../validator/user.validator");
 const validateLoginInput = require("../validator/login.validator");
 
@@ -30,6 +31,7 @@ const routes = [
     method: "GET",
     url: "/api/users/:id",
     handler: getUserById,
+    middleware: [validateId],
   },
   {
     method: "POST",
@@ -47,11 +49,13 @@ const routes = [
     method: "PUT",
     url: "/api/users/:id",
     handler: updateUser,
+    middleware: [validateId, validateUserInput],
   },
   {
     method: "DELETE",
     url: "/api/users/:id",
     handler: deleteUser,
+    middleware: [validateId],
   },
 ];
 

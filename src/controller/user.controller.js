@@ -1,5 +1,6 @@
 const helper = require("../helper/response.helper");
 const jwt = require("../tools/jwt.tools");
+const crypto = require('crypto');
 const {
   createUserModel,
   getAllUserModel,
@@ -10,12 +11,18 @@ const {
   updateUserToken,
 } = require("../model/user.model");
 
+const generateUniqueId = () => {
+    return crypto.randomUUID();
+};
+
 module.exports = {
   createUser: async (req, res) => {
     try {
+      const userId = generateUniqueId();
       const { username, email, password, phone } = req.body;
 
       const setData = {
+        id: userId,
         username,
         email,
         password,

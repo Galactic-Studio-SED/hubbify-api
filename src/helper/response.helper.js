@@ -1,8 +1,8 @@
 module.exports = {
-  response: (res, status, msg, data) => {
+  response: (res, status, message, data) => {
     const result = {};
     result.status = status || 200;
-    result.msg = msg;
+    result.message = message;
     result.data = data;
 
     res.statusCode = result.status;
