@@ -107,9 +107,6 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      if (!email || !password)
-        return helper.response(res, 401, "Information not provided");
-
       const user = await getUserByEmail(email);
 
       if (!user || user.lenght < 0)
@@ -121,7 +118,7 @@ module.exports = {
         password: userPassword,
         username,
       } = user[0];
-      
+
       //check passwords
       if (userPassword != password)
         return helper.response(res, 401, "Incorrect password");

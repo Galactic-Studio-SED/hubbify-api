@@ -13,6 +13,7 @@ const {
 } = require("../controller/user.controller");
 
 const validateUserInput = require("../validator/user.validator");
+const validateLoginInput = require("../validator/login.validator");
 
 const applicationAdm = process.env.APPLICATION_ADM || "";
 const applicationUser = process.env.APPLICATION_USR || "";
@@ -40,6 +41,7 @@ const routes = [
     method: "POST",
     url: "/api/users/singin",
     handler: singin,
+    middleware: [validateLoginInput],
   },
   {
     method: "PUT",

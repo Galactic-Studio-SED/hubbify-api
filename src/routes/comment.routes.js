@@ -6,6 +6,8 @@ const {
   deleteComment,
 } = require("../controller/comment.controller");
 
+const validateCommentInput = require("../validator/comment.validator");
+
 const routes = [
   {
     method: "GET",

@@ -6,11 +6,9 @@ module.exports = {
     result.data = data;
 
     res.statusCode = result.status;
-    res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify(result));
   },
   sendError: (res, statusCode, message) => {
-    res.writeHead(statusCode, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: message }));
   },
 };

@@ -1,6 +1,6 @@
 const validateInput = require("./validateInput");
 
-const validateUserInput = (req, res, next) => {
+const validateLoginInput = (req, res, next) => {
   if (!req.body) {
     return;
   }
@@ -21,4 +21,4 @@ const validateUserInput = (req, res, next) => {
   }
 };
 
-module.exports = validateUserInput;
+module.exports = validateLoginInput;
