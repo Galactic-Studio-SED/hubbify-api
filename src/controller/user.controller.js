@@ -87,6 +87,7 @@ module.exports = {
     try {
       const { id } = req.params;
       const checkId = await getUserByIdModel(id);
+
       if (checkId.length > 0) {
         const result = await deleteUserModel(id);
         return helper.response(
@@ -120,6 +121,7 @@ module.exports = {
         password: userPassword,
         username,
       } = user[0];
+      
       //check passwords
       if (userPassword != password)
         return helper.response(res, 401, "Incorrect password");

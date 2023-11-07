@@ -5,15 +5,9 @@ const validateUserInput = (req, res, next) => {
     return;
   }
 
-  const { username, email, phone } = req.body;
+  const { password, email } = req.body;
 
-  const isUsernameValid = validateInput(
-    username,
-    /^[a-zA-Z0-9_\s]+$/,
-    255,
-    "username",
-    res
-  );
+  const isPasswordValid = validateInput(password, null, 255, "password", res);
   const isEmailValid = validateInput(
     email,
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
@@ -21,15 +15,8 @@ const validateUserInput = (req, res, next) => {
     "email",
     res
   );
-  const isPhoneValid = validateInput(
-    phone,
-    /^[\d()-\s]+$/,
-    20,
-    "phone number",
-    res
-  );
 
-  if (isUsernameValid && isEmailValid && isPhoneValid) {
+  if (isPasswordValid && isEmailValid) {
     next();
   }
 };
