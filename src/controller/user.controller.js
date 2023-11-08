@@ -10,8 +10,11 @@ const {
   updateUserToken,
 } = require("../model/user.model");
 
+const applicationUser = process.env.APPLICATION_USR || "";
+const applicationAdm = process.env.APPLICATION_ADM || "";
+
 module.exports = {
-  createUser: async (req, res) => {
+  publicSingup: async (req, res) => {
     try {
       const { username, email, password, phone } = req.body;
 
@@ -20,6 +23,25 @@ module.exports = {
         email,
         password,
         phone,
+        role: applicationUser,
+      };
+
+      const result = await createUserModel(setData);
+      return helper.response(res, 200, "Success create user", result);
+    } catch (error) {
+      return helper.response(res, 400, "Bad Request", error);
+    }
+  },
+  adminGenerator: async (req, res) => {
+    try {
+      const { username, email, password, phone } = req.body;
+
+      const setData = {
+        username,
+        email,
+        password,
+        phone,
+        role: applicationAdm,
       };
 
       const result = await createUserModel(setData);
