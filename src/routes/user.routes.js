@@ -6,7 +6,8 @@ const {
 const {
   getAllUser,
   getUserById,
-  createUser,
+  publicSingup,
+  adminGenerator,
   updateUser,
   deleteUser,
   singin,
@@ -25,19 +26,28 @@ const routes = [
     method: "GET",
     url: "/api/users",
     handler: getAllUser,
-    middleware: [authentication, authorization([applicationAdm])],
+    middleware: [authentication, authorization([applicationSuperAdm])],
   },
   {
     method: "GET",
     url: "/api/users/:id",
     handler: getUserById,
-    middleware: [validateId],
+    middleware: [
+      authentication,
+      authorization([applicationUser, applicationAdm, applicationSuperAdm]),
+      validateId,
+    ],
   },
   {
     method: "POST",
     url: "/api/users",
-    handler: createUser,
-    middleware: [validateUserInput],
+    handler: publicSingup,
+  },
+  {
+    method: "POST",
+    url: "/api/users/adm",
+    handler: adminGenerator,
+    middleware: [authentication, authorization([applicationSuperAdm])],
   },
   {
     method: "POST",
@@ -49,13 +59,22 @@ const routes = [
     method: "PUT",
     url: "/api/users/:id",
     handler: updateUser,
-    middleware: [validateId, validateUserInput],
+    middleware: [
+      authentication,
+      authorization([applicationUser, applicationAdm]),
+      validateId,
+      validateUserInput
+    ],
   },
   {
     method: "DELETE",
     url: "/api/users/:id",
     handler: deleteUser,
-    middleware: [validateId],
+    middleware: [
+      authentication,
+      authorization([applicationUser, applicationSuperAdm]),
+      validateId,
+    ],
   },
 ];
 
