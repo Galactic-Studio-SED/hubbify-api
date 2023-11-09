@@ -9,6 +9,8 @@ const setSecurityHeaders = (res) => {
     `default-src 'self'; script-src 'self' 'nonce-${cspNonce}'; style-src 'self' https: 'unsafe-inline';`
   );
 
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+
   // Cross-Origin-Embedder-Policy Configuration
   res.setHeader("Cross-Origin-Embedder-Policy", "require-corp"); // This header enforces cross-origin isolation.
 

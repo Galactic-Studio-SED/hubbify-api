@@ -1,4 +1,5 @@
 const helper = require("../helper/response.helper");
+const crypto = require('crypto');
 const {
   createCommentModel,
   getAllCommentModel,
@@ -7,12 +8,18 @@ const {
   deleteCommentModel,
 } = require("../model/comment.model");
 
+const generateUniqueId = () => {
+  return crypto.randomUUID();
+};
+
 module.exports = {
   createComment: async (req, res) => {
     try {
+      const commentId = generateUniqueId();
       const { userId, content } = req.body;
 
       const setData = {
+        id: commentId,
         userId,
         content,
       };
