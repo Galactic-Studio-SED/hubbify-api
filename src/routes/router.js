@@ -1,5 +1,3 @@
-const { parse } = require("querystring");
-
 module.exports = (req, res, routes) => {
   const { method, url } = req;
 
@@ -34,7 +32,7 @@ module.exports = (req, res, routes) => {
 
         if (requestBodySize > 102400) {
           res.statusCode = 413;
-          res.end("The request body exceeds the size limit.");
+          res.end(JSON.stringify({ message: "he request body exceeds the size limit." } ));
           return;
         } else {
           body.push(chunk);
@@ -52,7 +50,7 @@ module.exports = (req, res, routes) => {
             req.body = JSON.parse(body);
           } catch (error) {
             res.statusCode = 400;
-            res.end("Invalid JSON request body");
+            res.end(JSON.stringify({ message: "Invalid JSON request body" } ));
             return;
           }
         }

@@ -13,7 +13,9 @@ const {
   singin,
 } = require("../controller/user.controller");
 
+const validateId = require("../validator/uuid.validator");
 const validateUserInput = require("../validator/user.validator");
+const validateLoginInput = require("../validator/login.validator");
 
 const applicationAdm = process.env.APPLICATION_ADM || "";
 const applicationUser = process.env.APPLICATION_USR || "";
@@ -33,6 +35,7 @@ const routes = [
     middleware: [
       authentication,
       authorization([applicationUser, applicationAdm, applicationSuperAdm]),
+      validateId,
     ],
   },
   {
@@ -50,6 +53,7 @@ const routes = [
     method: "POST",
     url: "/api/users/singin",
     handler: singin,
+    middleware: [validateLoginInput],
   },
   {
     method: "PUT",
@@ -58,6 +62,8 @@ const routes = [
     middleware: [
       authentication,
       authorization([applicationUser, applicationAdm]),
+      validateId,
+      validateUserInput
     ],
   },
   {
@@ -67,6 +73,7 @@ const routes = [
     middleware: [
       authentication,
       authorization([applicationUser, applicationSuperAdm]),
+      validateId,
     ],
   },
 ];

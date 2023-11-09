@@ -1,5 +1,6 @@
 const helper = require("../helper/response.helper");
 const jwt = require("../tools/jwt.tools");
+const crypto = require('crypto');
 const {
   createUserModel,
   getAllUserModel,
@@ -12,6 +13,11 @@ const {
 
 const applicationUser = process.env.APPLICATION_USR || "";
 const applicationAdm = process.env.APPLICATION_ADM || "";
+
+const generateUniqueId = () => {
+    return crypto.randomUUID();
+};
+
 
 module.exports = {
   publicSingup: async (req, res) => {
@@ -34,9 +40,11 @@ module.exports = {
   },
   adminGenerator: async (req, res) => {
     try {
+      const userId = generateUniqueId();
       const { username, email, password, phone } = req.body;
 
       const setData = {
+        id: userId,
         username,
         email,
         password,
@@ -109,6 +117,7 @@ module.exports = {
     try {
       const { id } = req.params;
       const checkId = await getUserByIdModel(id);
+
       if (checkId.length > 0) {
         const result = await deleteUserModel(id);
         return helper.response(
@@ -128,9 +137,6 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      if (!email || !password)
-        return helper.response(res, 401, "Information not provided");
-
       const user = await getUserByEmail(email);
 
       if (!user || user.lenght < 0)
@@ -142,6 +148,7 @@ module.exports = {
         password: userPassword,
         username,
       } = user[0];
+
       //check passwords
       if (userPassword != password)
         return helper.response(res, 401, "Incorrect password");

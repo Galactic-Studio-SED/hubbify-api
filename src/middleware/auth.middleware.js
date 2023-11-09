@@ -43,7 +43,7 @@ middlewares.authentication = async (req, res, next) => {
 
     //check user exists
     const user = await getUserByIdModel(userId);
-    if (!user || user.lenght < 0) {
+    if (!user || !Array.isArray(user) || user.length === 0) {
       console.log(`user ${userId} trying to send petitions with errors`);
       return helper.response(res, 401, "Bad credentials");
     }
