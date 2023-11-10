@@ -63,6 +63,7 @@ middlewares.authentication = async (req, res, next) => {
       username: username,
       banned: banned,
       email: email,
+      id: userId,
     };
     req.token = token;
     next();
