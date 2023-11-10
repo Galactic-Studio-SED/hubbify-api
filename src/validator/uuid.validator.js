@@ -5,7 +5,7 @@ const isValidUUID = (res, data) => {
     /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
   if (!uuidPattern.test(data)) {
-    sendError(res, 400, `Invalid ID format`);
+    //sendError(res, 400, `Invalid ID format`);
     return false;
   }
 
@@ -14,21 +14,22 @@ const isValidUUID = (res, data) => {
 
 const validateReference = (req, res, next) => {
   if (!req.body) {
-    sendError(res, 400, `Request body cannot be empty`);
-    return;
+    return sendError(res, 400, `Request body cannot be empty`);
   }
 
-  const { userId } = req.body;
+  const { id } = req.user;
 
-  if (!isValidUUID(res, userId)) return;
+  if (!isValidUUID(res, id)) return sendError(res, 400, "Invalid ID");
 
   next();
 };
 
 const validateId = (req, res, next) => {
   const { id } = req.params;
-
-  if (!isValidUUID(res, id)) return;
+  const { id: userId } = req.user;
+  if (!isValidUUID(res, id)) return sendError(res, 400, "Invalid ID");
+  if (userId)
+    if (!isValidUUID(res, id)) return sendError(res, 400, "Invalid user ID");
 
   next();
 };
