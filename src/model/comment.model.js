@@ -25,6 +25,22 @@ module.exports = {
       });
     });
   },
+
+  getAllOwnCommentModel: (id) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        "SELECT * FROM comment WHERE userId = ?",
+        [id],
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          return resolve(result);
+        }
+      );
+    });
+  },
+
   getCommentByIdModel: (id) => {
     return new Promise((resolve, reject) => {
       pool.query(
@@ -39,6 +55,22 @@ module.exports = {
       );
     });
   },
+
+  getCommentByIdAndUserIdModel: (id, userId) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `SELECT * FROM comment WHERE id = ? AND userId = ?`,
+        [id, userId],
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          return resolve(result);
+        }
+      );
+    });
+  },
+
   updateCommentModel: (setData, id) => {
     return new Promise((resolve, reject) => {
       pool.query(

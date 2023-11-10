@@ -13,7 +13,7 @@ const {
   singin,
 } = require("../controller/user.controller");
 
-const validateId = require("../validator/uuid.validator");
+const { validateId } = require("../validator/uuid.validator");
 const validateUserInput = require("../validator/user.validator");
 const validateLoginInput = require("../validator/login.validator");
 
@@ -34,7 +34,7 @@ const routes = [
     handler: getUserById,
     middleware: [
       authentication,
-      authorization([applicationUser, applicationAdm, applicationSuperAdm]),
+      authorization([applicationAdm, applicationSuperAdm]),
       validateId,
     ],
   },
@@ -61,9 +61,9 @@ const routes = [
     handler: updateUser,
     middleware: [
       authentication,
-      authorization([applicationUser, applicationAdm]),
+      authorization([applicationAdm]),
       validateId,
-      validateUserInput
+      validateUserInput,
     ],
   },
   {
@@ -72,7 +72,7 @@ const routes = [
     handler: deleteUser,
     middleware: [
       authentication,
-      authorization([applicationUser, applicationSuperAdm]),
+      authorization([applicationSuperAdm]),
       validateId,
     ],
   },

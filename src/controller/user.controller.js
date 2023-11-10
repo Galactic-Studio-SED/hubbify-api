@@ -1,6 +1,6 @@
 const helper = require("../helper/response.helper");
 const jwt = require("../tools/jwt.tools");
-const crypto = require('crypto');
+const crypto = require("crypto");
 const {
   createUserModel,
   getAllUserModel,
@@ -15,16 +15,17 @@ const applicationUser = process.env.APPLICATION_USR || "";
 const applicationAdm = process.env.APPLICATION_ADM || "";
 
 const generateUniqueId = () => {
-    return crypto.randomUUID();
+  return crypto.randomUUID();
 };
-
 
 module.exports = {
   publicSingup: async (req, res) => {
     try {
+      const userId = generateUniqueId();
       const { username, email, password, phone } = req.body;
 
       const setData = {
+        id: userId,
         username,
         email,
         password,
@@ -40,11 +41,11 @@ module.exports = {
   },
   adminGenerator: async (req, res) => {
     try {
-      const userId = generateUniqueId();
+      const admId = generateUniqueId();
       const { username, email, password, phone } = req.body;
 
       const setData = {
-        id: userId,
+        id: admId,
         username,
         email,
         password,
@@ -85,6 +86,28 @@ module.exports = {
       return helper.response(res, 400, "Bad Request", error);
     }
   },
+
+  getOwnUser: async (req, res) => {
+    console.log(req);
+    try {
+      const { id } = req.user;
+      const result = await getUserByIdModel(id);
+
+      if (result.length > 0) {
+        return helper.response(
+          res,
+          200,
+          `Success get user by id ${id}`,
+          result
+        );
+      } else {
+        return helper.response(res, 404, `User by id ${id} not found`, null);
+      }
+    } catch (error) {
+      return helper.response(res, 400, "Bad Request", error);
+    }
+  },
+
   updateUser: async (req, res) => {
     try {
       const { id } = req.params;
@@ -113,9 +136,60 @@ module.exports = {
       return helper.response(res, 400, "Bad Request", error);
     }
   },
+
+  updateOwnUser: async (req, res) => {
+    try {
+      const { id } = req.user;
+      const { username, email, password, phone } = req.body;
+
+      const setData = {
+        username,
+        email,
+        password,
+        phone,
+      };
+
+      const checkId = await getUserByIdModel(id);
+      if (checkId.length > 0) {
+        const result = await updateUserModel(setData, id);
+        return helper.response(
+          res,
+          200,
+          `Success update user by id ${id}`,
+          result
+        );
+      } else {
+        return helper.response(res, 404, `User by id ${id} not found`, null);
+      }
+    } catch (error) {
+      return helper.response(res, 400, "Bad Request", error);
+    }
+  },
+
   deleteUser: async (req, res) => {
     try {
       const { id } = req.params;
+      const checkId = await getUserByIdModel(id);
+
+      if (checkId.length > 0) {
+        const result = await deleteUserModel(id);
+        return helper.response(
+          res,
+          200,
+          `Success delete user by id ${id}`,
+          result
+        );
+      } else {
+        return helper.response(res, 404, `User by id ${id} not found`, null);
+      }
+    } catch (error) {
+      return helper.response(res, 400, "Bad Request", error);
+    }
+  },
+
+  deleteOwnUser: async (req, res) => {
+    try {
+      const { id } = req.user;
       const checkId = await getUserByIdModel(id);
 
       if (checkId.length > 0) {

@@ -11,7 +11,10 @@ const {
   deleteComment,
 } = require("../controller/comment.controller");
 
-const { validateReference, validateId } = require("../validator/uuid.validator");
+const {
+  validateReference,
+  validateId,
+} = require("../validator/uuid.validator");
 const validateCommentInput = require("../validator/comment.validator");
 
 const applicationAdm = process.env.APPLICATION_ADM || "";
@@ -28,39 +31,13 @@ const routes = [
     method: "GET",
     url: "/api/comments/:id",
     handler: getCommentById,
-    middleware: [validateId],
-  },
-  {
-    method: "POST",
-    url: "/api/comments",
-    handler: createComment,
-    middleware: [
-      authentication,
-      authorization([applicationUser, applicationAdm]),
-      validateReference,
-      validateCommentInput
-    ],
-  },
-  {
-    method: "PUT",
-    url: "/api/comments/:id",
-    handler: updateComment,
-    middleware: [
-      authentication,
-      authorization([applicationUser, applicationAdm]),
-      validateId,
-      validateCommentInput
-    ],
+    middleware: [authentication, authorization([applicationAdm]), validateId],
   },
   {
     method: "DELETE",
     url: "/api/comments/:id",
     handler: deleteComment,
-    middleware: [
-      authentication,
-      authorization([applicationUser, applicationAdm]),
-      validateId,
-    ],
+    middleware: [authentication, authorization([applicationAdm]), validateId],
   },
 ];
 
