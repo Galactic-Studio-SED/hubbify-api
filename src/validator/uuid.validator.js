@@ -19,7 +19,7 @@ const validateReference = (req, res, next) => {
 
   const { id } = req.user;
 
-  if (!isValidUUID(res, id)) return sendError(res, 400, "Invalid ID");
+  if (!isValidUUID(res, id)) return sendError(res, 400, `Invalid ID ${id}`);
 
   next();
 };
@@ -27,7 +27,7 @@ const validateReference = (req, res, next) => {
 const validateId = (req, res, next) => {
   const { id } = req.params;
   const { id: userId } = req.user;
-  if (!isValidUUID(res, id)) return sendError(res, 400, "Invalid ID");
+  if (!isValidUUID(res, id)) return sendError(res, 400, `Invalid ID ${id}`);
   if (userId)
     if (!isValidUUID(res, id)) return sendError(res, 400, "Invalid user ID");
 

@@ -11,6 +11,13 @@ const router = require("./routes/router");
 
 const server = http.createServer(async (req, res) => {
   setSecurityHeaders(res);
+
+  if (req.method === "OPTIONS") {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
+
   await router(req, res, routes);
 });
 

@@ -10,6 +10,7 @@ const {
   getUserByEmail,
   updateUserToken,
 } = require("../model/user.model");
+const cookie = require("cookie");
 
 const applicationUser = process.env.APPLICATION_USR || "";
 const applicationAdm = process.env.APPLICATION_ADM || "";
@@ -221,6 +222,7 @@ module.exports = {
         email: userEmail,
         password: userPassword,
         username,
+        role,
       } = user[0];
 
       //check passwords
@@ -231,14 +233,29 @@ module.exports = {
 
       const response = await updateUserToken(id, token);
 
+      // Set the cookie
+      const cookieOptions = {
+        httpOnly: true, // The cookie will not be accessible through JavaScript in the browser
+        secure: true, // The cookie will only be sent if the connection is secure (HTTPS)
+        sameSite: "Strict", // Cookie will not be sent on third party requests
+        maxAge: 3600, // The duration of the cookie in seconds
+      };
+
+      // Create the cookie
+      const jwtCookie = cookie.serialize("jwt", token, cookieOptions);
+
+      // Add the cookie to the response
+      res.setHeader("Set-Cookie", jwtCookie);
+
       return helper.response(res, 200, `Token added successfully on ${id}`, {
         user: id,
         username: username,
         email: userEmail,
         token,
+        roles: role,
       });
     } catch (error) {
-      return helper.response(res, 400, "Bad request", error);
+      return helper.response(res, 400, "Bad request 1", error);
     }
   },
 };
