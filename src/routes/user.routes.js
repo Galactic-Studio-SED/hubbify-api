@@ -9,6 +9,7 @@ const {
   publicSingup,
   adminGenerator,
   updateUser,
+  upgradeUser,
   deleteUser,
   singin,
 } = require("../controller/user.controller");
@@ -67,12 +68,22 @@ const routes = [
     ],
   },
   {
+    method: "PUT",
+    url: "/api/users/upgrade/:id",
+    handler: upgradeUser,
+    middleware: [
+      authentication,
+      authorization([applicationSuperAdm]),
+      validateId,
+    ],
+  },
+  {
     method: "DELETE",
     url: "/api/users/:id",
     handler: deleteUser,
     middleware: [
       authentication,
-      authorization([applicationSuperAdm]),
+      authorization([applicationSuperAdm, applicationAdm]),
       validateId,
     ],
   },

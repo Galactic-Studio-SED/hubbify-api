@@ -6,6 +6,7 @@ const {
   getAllUserModel,
   getUserByIdModel,
   updateUserModel,
+  upgradeUserModel,
   deleteUserModel,
   getUserByEmail,
   updateUserToken,
@@ -23,7 +24,7 @@ module.exports = {
   publicSingup: async (req, res) => {
     try {
       const userId = generateUniqueId();
-      const { username, email, password, phone } = req.body;
+      const { username, email, password, phone, birthdate } = req.body;
 
       const setData = {
         id: userId,
@@ -31,6 +32,7 @@ module.exports = {
         email,
         password,
         phone,
+        birthdate,
         role: applicationUser,
       };
 
@@ -43,7 +45,7 @@ module.exports = {
   adminGenerator: async (req, res) => {
     try {
       const admId = generateUniqueId();
-      const { username, email, password, phone } = req.body;
+      const { username, email, password, phone, birthdate } = req.body;
 
       const setData = {
         id: admId,
@@ -51,6 +53,7 @@ module.exports = {
         email,
         password,
         phone,
+        birthdate,
         role: applicationAdm,
       };
 
@@ -112,13 +115,14 @@ module.exports = {
   updateUser: async (req, res) => {
     try {
       const { id } = req.params;
-      const { username, email, password, phone } = req.body;
+      const { username, email, password, phone, birthdate } = req.body;
 
       const setData = {
         username,
         email,
         password,
         phone,
+        birthdate,
       };
 
       const checkId = await getUserByIdModel(id);
@@ -138,16 +142,39 @@ module.exports = {
     }
   },
 
+  upgradeUser: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const checkId = await getUserByIdModel(id);
+
+      if (checkId.length > 0) {
+        const result = await upgradeUserModel(id);
+        return helper.response(
+          res,
+          200,
+          `Success update user by id ${id}`,
+          result
+        );
+      } else {
+        return helper.response(res, 404, `User by id ${id} not found`, null);
+      }
+    } catch (error) {
+      return helper.response(res, 400, "Bad Request", error);
+    }
+  },
+
   updateOwnUser: async (req, res) => {
     try {
       const { id } = req.user;
-      const { username, email, password, phone } = req.body;
+      const { username, email, password, phone, birthdate } = req.body;
 
       const setData = {
         username,
         email,
         password,
         phone,
+        birthdate,
       };
 
       const checkId = await getUserByIdModel(id);
@@ -222,6 +249,7 @@ module.exports = {
         email: userEmail,
         password: userPassword,
         username,
+        birthdate,
         role,
       } = user[0];
 
