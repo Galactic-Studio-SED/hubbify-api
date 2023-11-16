@@ -1,6 +1,8 @@
 const helper = require("../helper/response.helper");
 const jwt = require("../tools/jwt.tools");
 const crypto = require("crypto");
+const bcrypt = require("bcrypt");
+const { encrypt, decrypt } = require("../tools/crypto.tools");
 const {
   createUserModel,
   getAllUserModel,
@@ -15,6 +17,7 @@ const cookie = require("cookie");
 
 const applicationUser = process.env.APPLICATION_USR || "";
 const applicationAdm = process.env.APPLICATION_ADM || "";
+const s_round = process.env.USER_PSWD_SALT_ROUNDS || 10;
 
 const generateUniqueId = () => {
   return crypto.randomUUID();
@@ -26,14 +29,20 @@ module.exports = {
       const userId = generateUniqueId();
       const { username, email, password, phone, birthdate } = req.body;
 
+      const salt = bcrypt.genSaltSync(parseInt(s_round));
+      const _email = encrypt(email);
+      const _phone = encrypt(phone);
+      const _password = bcrypt.hashSync(password, salt);
+
       const setData = {
         id: userId,
         username,
-        email,
-        password,
-        phone,
+        email: _email,
+        password: _password,
+        phone: _phone,
         birthdate,
         role: applicationUser,
+        salt,
       };
 
       const result = await createUserModel(setData);
@@ -47,14 +56,20 @@ module.exports = {
       const admId = generateUniqueId();
       const { username, email, password, phone, birthdate } = req.body;
 
+      const salt = bcrypt.genSaltSync(parseInt(s_round));
+      const _email = encrypt(email);
+      const _phone = encrypt(phone);
+      const _password = bcrypt.hashSync(password, salt);
+
       const setData = {
         id: admId,
         username,
-        email,
-        password,
-        phone,
+        email: _email,
+        password: _password,
+        phone: _phone,
         birthdate,
         role: applicationAdm,
+        salt,
       };
 
       const result = await createUserModel(setData);
@@ -65,7 +80,21 @@ module.exports = {
   },
   getAllUser: async (req, res) => {
     try {
-      const result = await getAllUserModel();
+      let result = await getAllUserModel();
+      result = result.map((user) => {
+        return {
+          id: user.id,
+          username: user.username,
+          password: user.password,
+          email: decrypt(user.email),
+          phone: decrypt(user.phone),
+          role: user.role,
+          birthdate: user.birthdate,
+          address: user.address,
+          banned: user.banned,
+          token: user.token,
+        };
+      });
       return helper.response(res, 200, "Success get all user", result);
     } catch (error) {
       return helper.response(res, 400, "Bad Request", error);
@@ -77,6 +106,9 @@ module.exports = {
       const result = await getUserByIdModel(id);
 
       if (result.length > 0) {
+        const { email, phone } = result[0];
+        result[0].email = decrypt(email);
+        result[0].phone = decrypt(phone);
         return helper.response(
           res,
           200,
@@ -92,12 +124,15 @@ module.exports = {
   },
 
   getOwnUser: async (req, res) => {
-    console.log(req);
     try {
       const { id } = req.user;
       const result = await getUserByIdModel(id);
 
       if (result.length > 0) {
+        const { email, phone } = result[0];
+        result[0].email = decrypt(email);
+        result[0].phone = decrypt(phone);
+
         return helper.response(
           res,
           200,
@@ -117,17 +152,39 @@ module.exports = {
       const { id } = req.params;
       const { username, email, password, phone, birthdate } = req.body;
 
-      const setData = {
-        username,
-        email,
-        password,
-        phone,
-        birthdate,
-      };
+      const _email = encrypt(email);
+      const _phone = encrypt(phone);
+      let salt, _password, setData;
+      if (password) {
+        salt = bcrypt.genSaltSync(parseInt(s_round));
+        _password = bcrypt.hashSync(password, salt);
+
+        setData = {
+          username,
+          email: _email,
+          password: _password,
+          phone: _phone,
+          birthdate,
+          salt,
+        };
+      } else {
+        setData = {
+          username,
+          email: _email,
+          phone: _phone,
+          birthdate,
+          salt,
+        };
+      }
 
       const checkId = await getUserByIdModel(id);
       if (checkId.length > 0) {
         const result = await updateUserModel(setData, id);
+        if (result.lenght > 0) {
+          const { email, phone } = result[0];
+          result[0].email = decrypt(email);
+          result[0].phone = decrypt(phone);
+        }
         return helper.response(
           res,
           200,
@@ -169,17 +226,27 @@ module.exports = {
       const { id } = req.user;
       const { username, email, password, phone, birthdate } = req.body;
 
+      const salt = bcrypt.genSaltSync(parseInt(s_round));
+      const _email = encrypt(email);
+      const _phone = encrypt(phone);
+      const _password = bcrypt.hashSync(password, salt);
+
       const setData = {
         username,
-        email,
-        password,
-        phone,
+        email: _email,
+        password: _password,
+        phone: _phone,
         birthdate,
       };
 
       const checkId = await getUserByIdModel(id);
       if (checkId.length > 0) {
         const result = await updateUserModel(setData, id);
+        if (result) {
+          const { email, phone } = result;
+          result.email = decrypt(email);
+          result.phone = decrypt(phone);
+        }
         return helper.response(
           res,
           200,
@@ -238,10 +305,9 @@ module.exports = {
   singin: async (req, res) => {
     try {
       const { email, password } = req.body;
+      const user = await getUserByEmail(encrypt(email));
 
-      const user = await getUserByEmail(email);
-
-      if (!user || user.lenght < 0)
+      if (!user || !Array.isArray(user) || user.length === 0)
         return helper.response(res, 401, "User does not exist");
 
       const {
@@ -254,7 +320,7 @@ module.exports = {
       } = user[0];
 
       //check passwords
-      if (userPassword != password)
+      if (!bcrypt.compareSync(password, userPassword))
         return helper.response(res, 401, "Incorrect password");
 
       const token = jwt.generateToken(id);
@@ -278,12 +344,12 @@ module.exports = {
       return helper.response(res, 200, `Token added successfully on ${id}`, {
         user: id,
         username: username,
-        email: userEmail,
+        email: decrypt(userEmail),
         token,
         roles: role,
       });
     } catch (error) {
-      return helper.response(res, 400, "Bad request 1", error);
+      return helper.response(res, 400, "Bad request", error);
     }
   },
 };

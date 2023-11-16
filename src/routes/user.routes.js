@@ -27,7 +27,10 @@ const routes = [
     method: "GET",
     url: "/api/users",
     handler: getAllUser,
-    middleware: [authentication, authorization([applicationSuperAdm])],
+    middleware: [
+      authentication,
+      authorization([applicationAdm, applicationSuperAdm]),
+    ],
   },
   {
     method: "GET",
@@ -62,7 +65,7 @@ const routes = [
     handler: updateUser,
     middleware: [
       authentication,
-      authorization([applicationAdm]),
+      authorization([applicationAdm, applicationSuperAdm]),
       validateId,
       validateUserInput,
     ],
@@ -73,7 +76,7 @@ const routes = [
     handler: upgradeUser,
     middleware: [
       authentication,
-      authorization([applicationSuperAdm]),
+      authorization([applicationAdm, applicationSuperAdm]),
       validateId,
     ],
   },
