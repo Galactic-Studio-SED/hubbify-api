@@ -27,7 +27,7 @@ const routes = [
     handler: getAllOwnComment,
     middleware: [
       authentication,
-      authorization([applicationUser, applicationAdm]),
+      authorization([applicationUser, applicationAdm, applicationSuperAdm]),
     ],
   },
   {
@@ -36,7 +36,7 @@ const routes = [
     handler: createComment,
     middleware: [
       authentication,
-      authorization([applicationUser, applicationAdm]),
+      authorization([applicationUser, applicationAdm, applicationSuperAdm]),
       validateReference,
       validateCommentInput,
     ],
@@ -47,7 +47,7 @@ const routes = [
     handler: updateOwnComment,
     middleware: [
       authentication,
-      authorization([applicationUser, applicationAdm]),
+      authorization([applicationUser, applicationAdm, applicationSuperAdm]),
       validateId,
       validateCommentInput,
     ],
@@ -58,7 +58,7 @@ const routes = [
     handler: deleteOwnComment,
     middleware: [
       authentication,
-      authorization([applicationUser, applicationAdm]),
+      authorization([applicationUser, applicationAdm, applicationSuperAdm]),
       validateId,
     ],
   },

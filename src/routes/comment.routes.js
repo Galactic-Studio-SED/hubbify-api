@@ -31,13 +31,21 @@ const routes = [
     method: "GET",
     url: "/api/comments/:id",
     handler: getCommentById,
-    middleware: [authentication, authorization([applicationAdm]), validateId],
+    middleware: [
+      authentication,
+      authorization([applicationAdm, applicationSuperAdm]),
+      validateId,
+    ],
   },
   {
     method: "DELETE",
     url: "/api/comments/:id",
     handler: deleteComment,
-    middleware: [authentication, authorization([applicationAdm]), validateId],
+    middleware: [
+      authentication,
+      authorization([applicationAdm, applicationSuperAdm]),
+      validateId,
+    ],
   },
 ];
 

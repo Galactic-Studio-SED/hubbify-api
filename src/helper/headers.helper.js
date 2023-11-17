@@ -4,7 +4,7 @@ const cspNonce = crypto.randomBytes(16).toString("base64");
 
 const setSecurityHeaders = (res) => {
   // Content-Security-Policy Configuration
-  res.setHeader(
+  /*res.setHeader(
     "Content-Security-Policy",
     `default-src 'self'; script-src 'self' 'nonce-${cspNonce}'; style-src 'self' https: 'unsafe-inline';`
   );
@@ -35,6 +35,17 @@ const setSecurityHeaders = (res) => {
     "Strict-Transport-Security",
     "max-age=15552000; includeSubDomains"
   ); // This header instructs browsers to prefer HTTPS instead of insecure HTTP.
+*/
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,HEAD,PUT,PATCH,POST,DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, authorization, Content-Type, Accept, withcredentials"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
 };
 
 module.exports = setSecurityHeaders;

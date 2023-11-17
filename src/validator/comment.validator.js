@@ -9,7 +9,7 @@ const validateCommentInput = (req, res, next) => {
 
   const { content } = req.body;
 
-  if (!validateInput(content, /^[a-zA-Z0-9_\s]+$/, 255, "content", res)) return;
+  if (!validateInput(content, null, 255, "content", res)) return;
 
   next();
 };

@@ -9,7 +9,6 @@ module.exports = {
         }
         const newData = {
           id: result.insertId,
-          ...setData,
         };
         return resolve(newData);
       });
@@ -47,6 +46,24 @@ module.exports = {
           const newData = {
             id,
             ...setData,
+          };
+          return resolve(newData);
+        }
+      );
+    });
+  },
+  upgradeUserModel: (id) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        "UPDATE user SET role = ? WHERE id = ?",
+        [process.env.APPLICATION_ADM, id],
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          const newData = {
+            id,
+            role: process.env.APPLICATION_ADM,
           };
           return resolve(newData);
         }
