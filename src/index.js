@@ -1,6 +1,7 @@
 const http = require("http");
 const dotenv = require("dotenv");
 const setSecurityHeaders = require("./helper/headers.helper");
+const rateLimit = require("./middleware/rateLimit.middleware");
 
 dotenv.config();
 
@@ -18,7 +19,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  await router(req, res, routes);
+  rateLimit(req, res, async () => {
+    await router(req, res, routes);
+  });
 });
 
 server.listen(port, () => {
